@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "proc-repl-mcp"
+version = "0.1.0"
+description = "Stateful subprocess REPL/TUI sessions for MCP"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { file = "LICENSE" }
+authors = [{ name = "snakesammy" }]
+keywords = ["mcp", "repl", "pty", "tmux", "tui"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Environment :: Console",
+  "License :: OSI Approved :: GNU Affero General Public License v3",
+  "Operating System :: MacOS :: MacOS X",
+  "Operating System :: POSIX :: Linux",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Topic :: Software Development :: Testing",
+]
+
+[project.scripts]
+proc-repl-mcp = "proc_repl_mcp:main"
+
+[tool.setuptools]
+py-modules = ["proc_repl_mcp"]
+license-files = ["LICENSE"]
+
