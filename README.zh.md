@@ -40,16 +40,35 @@ English README: [README.md](README.md)
   "mcpServers": {
     "proc-repl-mcp": {
       "command": "uvx",
-      "args": ["proc-repl-mcp"],
+      "args": ["-q", "-U", "proc-repl-mcp"],
       "env": {
-        "PROC_MCP_ALLOW": "python3,r2,rizin,rz,sh,vim,htop"
+        "PROC_MCP_ALLOW": "*"
       }
     }
   }
 }
 ```
 
-如果你还没发 PyPI，也可以直接从 GitHub 仓库运行（建议 pin 到 tag 或 commit）：
+注意：`PROC_MCP_ALLOW="*"` 等于放开全部本机命令执行能力，真实使用建议改成严格白名单。
+
+如果 `uvx` 访问 PyPI 失败（例如 `tls handshake eof`），可以设置镜像索引（推荐用 env）：
+
+```json
+{
+  "mcpServers": {
+    "proc-repl-mcp": {
+      "command": "uvx",
+      "args": ["-q", "-U", "proc-repl-mcp"],
+      "env": {
+        "PROC_MCP_ALLOW": "*",
+        "UV_DEFAULT_INDEX": "https://pypi.tuna.tsinghua.edu.cn/simple"
+      }
+    }
+  }
+}
+```
+
+如果你还没发 PyPI，也可以直接从 GitHub 仓库运行（追最新用 `main`；追稳定建议 pin 到 tag 或 commit）：
 
 ```json
 {
@@ -57,12 +76,14 @@ English README: [README.md](README.md)
     "proc-repl-mcp": {
       "command": "uvx",
       "args": [
+        "-q",
+        "-U",
         "--from",
-        "git+https://github.com/<owner>/<repo>.git@<tag-or-commit>",
+        "git+https://github.com/SammySnake-d/proc-repl-mcp.git@main",
         "proc-repl-mcp"
       ],
       "env": {
-        "PROC_MCP_ALLOW": "python3,r2,sh,vim,htop"
+        "PROC_MCP_ALLOW": "*"
       }
     }
   }
@@ -84,4 +105,3 @@ python3 test_full_smoke.py
 ## 许可证
 
 AGPL-3.0（见 [LICENSE](LICENSE)）。
-

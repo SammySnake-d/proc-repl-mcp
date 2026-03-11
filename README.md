@@ -33,9 +33,9 @@ If you have `uv` installed, you can run this without pre-installing the package:
   "mcpServers": {
     "proc-repl-mcp": {
       "command": "uvx",
-      "args": ["proc-repl-mcp"],
+      "args": ["-q", "-U", "proc-repl-mcp"],
       "env": {
-        "PROC_MCP_ALLOW": "python3,r2,rizin,rz,sh,vim,htop"
+        "PROC_MCP_ALLOW": "*"
       }
     }
   }
@@ -48,6 +48,48 @@ Notes:
   boundaries.
 - For TUIs, prefer the tmux tools: `tmux_open_session` then `tmux_step` to
   send-keys and capture output in one roundtrip.
+- `PROC_MCP_ALLOW="*"` enables everything (local RCE). Prefer a strict allowlist
+  in real setups.
+
+If `uvx` fails to connect to PyPI in your network, set a mirror index. You can
+either pass it via args:
+
+```json
+{
+  "mcpServers": {
+    "proc-repl-mcp": {
+      "command": "uvx",
+      "args": [
+        "-q",
+        "-U",
+        "--default-index",
+        "https://pypi.tuna.tsinghua.edu.cn/simple",
+        "proc-repl-mcp"
+      ],
+      "env": {
+        "PROC_MCP_ALLOW": "*"
+      }
+    }
+  }
+}
+```
+
+Or set it via env (recommended):
+
+```json
+{
+  "mcpServers": {
+    "proc-repl-mcp": {
+      "command": "uvx",
+      "args": ["-q", "-U", "proc-repl-mcp"],
+      "env": {
+        "PROC_MCP_ALLOW": "*",
+        "UV_DEFAULT_INDEX": "https://pypi.tuna.tsinghua.edu.cn/simple"
+      }
+    }
+  }
+}
+```
 
 If you haven't published to PyPI yet, you can run directly from GitHub (pin to
 a tag or commit):
@@ -58,12 +100,14 @@ a tag or commit):
     "proc-repl-mcp": {
       "command": "uvx",
       "args": [
+        "-q",
+        "-U",
         "--from",
-        "git+https://github.com/<owner>/<repo>.git@<tag-or-commit>",
+        "git+https://github.com/SammySnake-d/proc-repl-mcp.git@main",
         "proc-repl-mcp"
       ],
       "env": {
-        "PROC_MCP_ALLOW": "python3,r2,sh,vim,htop"
+        "PROC_MCP_ALLOW": "*"
       }
     }
   }
