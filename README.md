@@ -49,6 +49,27 @@ Notes:
 - For TUIs, prefer the tmux tools: `tmux_open_session` then `tmux_step` to
   send-keys and capture output in one roundtrip.
 
+If you haven't published to PyPI yet, you can run directly from GitHub (pin to
+a tag or commit):
+
+```json
+{
+  "mcpServers": {
+    "proc-repl-mcp": {
+      "command": "uvx",
+      "args": [
+        "--from",
+        "git+https://github.com/<owner>/<repo>.git@<tag-or-commit>",
+        "proc-repl-mcp"
+      ],
+      "env": {
+        "PROC_MCP_ALLOW": "python3,r2,sh,vim,htop"
+      }
+    }
+  }
+}
+```
+
 ## Install (pip)
 
 ```bash
