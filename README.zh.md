@@ -94,6 +94,7 @@ English README: [README.md](README.md)
 
 - r2/rizin：强烈建议使用 `-0`/`-q0`，并在 `run` 里用 `until_nul=true`，这样服务端可以用 `\\x00` 作为“命令输出结束”的稳定边界。
 - TUI：优先用 `tmux_step`，它会在一次调用里完成 `send-keys -> 等待 -> capture-pane`，比客户端手动多次 roundtrip 更稳定。
+- `tmux_send_keys` 现在会把每个 key 拆成单独的 tmux 操作，并在提交前保留一个很短的间隔；如果某个 TUI 仍然偏慢，可以用 `PROC_MCP_TMUX_KEY_DELAY_MS` 调大这个间隔。
 
 ## 开发与测试
 

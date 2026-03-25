@@ -48,6 +48,9 @@ Notes:
   boundaries.
 - For TUIs, prefer the tmux tools: `tmux_open_session` then `tmux_step` to
   send-keys and capture output in one roundtrip.
+- `tmux_send_keys` now sends each key as its own tmux operation and keeps a
+  short gap before `Enter`. Tune it with `PROC_MCP_TMUX_KEY_DELAY_MS` if a TUI
+  needs slower submission timing.
 - `PROC_MCP_ALLOW="*"` enables everything (local RCE). Prefer a strict allowlist
   in real setups.
 

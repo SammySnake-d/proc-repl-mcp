@@ -934,6 +934,15 @@ class ProcReplMcp:
         # Target the session's active pane (robust to base-index != 0).
         return ts.name
 
+    def _tmux_key_delay_s(self) -> float:
+        raw = os.environ.get("PROC_MCP_TMUX_KEY_DELAY_MS", "30")
+        try:
+            delay_ms = int(raw)
+        except Exception:
+            delay_ms = 30
+        delay_ms = max(0, min(delay_ms, 1000))
+        return delay_ms / 1000.0
+
     def _get_tmux_session(self, sid: str) -> Optional[TmuxSession]:
         return self._tmux_sessions.get(sid)
 
@@ -1056,7 +1065,7 @@ class ProcReplMcp:
             )
         return _tool_text(json.dumps(out))
 
-    def _tmux_send_keys_impl(self, ts: TmuxSession, keys: List[str], *, enter: bool, literal: bool) -> Optional[str]:
+    def _tmux_send_keys_once(self, ts: TmuxSession, keys: List[str], *, literal: bool) -> Optional[str]:
         tmux = self._tmux_path()
         if not tmux:
             return "tmux not found in PATH"
@@ -1079,19 +1088,26 @@ class ProcReplMcp:
                 msg = f"tmux send-keys failed (exit {cp.returncode})"
             return msg
 
-        # If using -l, tmux treats "Enter" as literal text, so send it separately without -l.
+        return None
+
+    def _tmux_send_keys_impl(self, ts: TmuxSession, keys: List[str], *, enter: bool, literal: bool) -> Optional[str]:
+        delay_s = self._tmux_key_delay_s()
+
+        for idx, key in enumerate(keys):
+            if idx and delay_s:
+                time.sleep(delay_s)
+
+            err = self._tmux_send_keys_once(ts, [str(key)], literal=literal)
+            if err:
+                return err
+
         if enter:
-            try:
-                cp2 = subprocess.run([tmux, "send-keys", "-t", self._tmux_target(ts), "Enter"], env=self._base_env, capture_output=True, text=True, timeout=5)
-            except subprocess.TimeoutExpired:
-                return "tmux send-keys Enter timed out"
-            except Exception as e:
-                return f"tmux send-keys Enter failed: {e}"
-            if cp2.returncode != 0:
-                msg = (cp2.stderr or cp2.stdout or "").strip()
-                if not msg:
-                    msg = f"tmux send-keys Enter failed (exit {cp2.returncode})"
-                return msg
+            if keys and delay_s:
+                time.sleep(delay_s)
+
+            err = self._tmux_send_keys_once(ts, ["Enter"], literal=False)
+            if err:
+                return err
 
         return None
 
